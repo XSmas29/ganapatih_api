@@ -1,23 +1,31 @@
 import express from 'express';
 import axios from 'axios';
 import dotenv from 'dotenv';
+import cors from 'cors'
 
 dotenv.config();
 
 const app = express();
 const port = 3000;
 
+app.use(express.json());
+app.use(cors({
+  origin: '*',
+}))
+
 app.get('/', (req, res) => {
   res.send('Hello, TypeScript Node Express!');
 });
 
 app.get('/data', async (req, res) => {
-  const { time_min, time_max, fare_min, fare_max, distance_min, distance_max, payment_type } = req.query
+  const { pickup_datetime_min, pickup_datetime_max, dropoff_datetime_min, dropoff_datetime_max, fare_min, fare_max, distance_min, distance_max, payment_type } = req.query
   const url = 'https://data.cityofnewyork.us/resource/gkne-dk5s.json'
   const filter = []
 
-  if (time_min) filter.push(`pickup_datetime >= '${time_min}'`)
-  if (time_max) filter.push(`pickup_datetime <= '${time_max}'`)
+  if (pickup_datetime_min) filter.push(`pickup_datetime >= '${pickup_datetime_min}'`)
+  if (pickup_datetime_max) filter.push(`pickup_datetime <= '${pickup_datetime_max}'`)
+  if (dropoff_datetime_min) filter.push(`dropoff_datetime >= '${dropoff_datetime_min}'`)
+  if (dropoff_datetime_max) filter.push(`dropoff_datetime <= '${dropoff_datetime_max}'`)
   if (fare_min) filter.push(`total_amount >= ${fare_min}`)
   if (fare_max) filter.push(`total_amount <= ${fare_max}`)
   if (distance_min) filter.push(`trip_distance >= ${distance_min}`)
@@ -36,6 +44,13 @@ app.get('/data', async (req, res) => {
     }
   )
   console.log(data.data.length)
+  // const arr: string[] = []
+  // data.data.map((item: any) => {
+  //   if (arr.findIndex((i) => i === item.payment_type) === -1) {
+  //     arr.push(item.payment_type)
+  //   }
+  // })
+  // console.log(arr)
   res.send(data.data);
 });
 
