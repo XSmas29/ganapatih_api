@@ -70,3 +70,4 @@ app.get('/data', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+exports.default = app;
